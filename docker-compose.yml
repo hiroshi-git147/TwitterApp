@@ -1,17 +1,17 @@
-version: '3'
+version: "3"
 services:
   db:
     image: mysql:5.7.36
-    container_name: "mysql_test"
+    container_name: "twitter_db"
     environment:
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: mysql_test_db
-        MYSQL_USER: admin
-        MYSQL_PASSWORD: secret
-        TZ: 'Asia/Tokyo'
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: twitter_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: secret
+      TZ: "Asia/Tokyo"
     # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
     ports:
-        - 3306:3306
+      - 3306:3306
     # コマンドの指定
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     # 名前付きボリュームを設定する（名前付きボリューム:コンテナ側ボリュームの場所）
@@ -22,14 +22,14 @@ services:
 
   php:
     build: ./docker/php
-    container_name: "php-fpm"
+    container_name: "twitter-php-fpm"
     # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
     volumes:
       - ./src:/var/www
 
   nginx:
     image: nginx:latest
-    container_name: "nginx_test"
+    container_name: "twitter_nginx"
     # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
     ports:
       - 80:80
@@ -43,7 +43,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: "phpmyadmin_test"
+    container_name: "twitter_app_phpmyadmin"
     environment:
       - PMA_ARBITRARY=1 # サーバ設定：サーバーをローカル以外も指定
       - PMA_HOST=db # ホスト設定：dbを指定
@@ -61,7 +61,7 @@ services:
 
   node:
     image: node:14.18-alpine
-    container_name: "node14.18-alpine"
+    container_name: "twitter_app_node14.18-alpine"
     # コンテナ内の標準出力とホストの出力を設定：trueを指定
     tty: true
     # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
@@ -69,6 +69,13 @@ services:
       - ./src:/var/www
     # コンテナ起動後のカレントディレクトリを設定
     working_dir: /var/www
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "8025:8025" # Web UI → http://localhost:8025
+      - "1025:1025" # SMTP ポート
 
 # サービスレベルで名前付きボリュームを命名する
 volumes:
