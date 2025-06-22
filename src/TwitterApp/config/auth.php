@@ -40,6 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // ReactなどのSPAと連携する際にSanctumを利用するための設定
+        // 'api' => [
+        //     'driver' => 'sanctum',
+        //     'provider' => 'users',
+        //     'hash' => false,
+        // ],
+
     ],
 
     /*

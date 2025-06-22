@@ -37,4 +37,9 @@ class UserService implements UserServiceInterface
 
         return true;
     }
+
+    public function login(string $user) {
+        return;
+    }
+
 }
