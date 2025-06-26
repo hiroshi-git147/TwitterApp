@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Implementations;
+namespace App\Services;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;

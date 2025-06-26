@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Implementations;
+namespace App\Services;
 
 use App\Models\User;
 use App\Services\Interfaces\UserServiceInterface;
