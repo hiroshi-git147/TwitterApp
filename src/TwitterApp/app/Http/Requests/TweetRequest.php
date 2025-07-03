@@ -13,10 +13,16 @@ class TweetRequest extends FormRequest
         return true;
     }
 
+
     public function rules(): array
     {
         return [
-            'content' => 'required|string|max:255',
+            'content' => [
+                'required',
+                'string',
+                'max:255',
+                'ValidationList::japaneseChars()',
+            ],
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|integer|exists:tweets,id',
         ];
@@ -26,9 +32,10 @@ class TweetRequest extends FormRequest
     {
         return [
             'content.required' => '内容は必須です。',
+            'content.max' => '内容は255文字以内で入力してください。',
+            'content.regex' => '内容は日本語と一部の記号（、。・「」『』！？ー）のみで入力してください。',
             'image.image' => '画像ファイルのみアップロード可能です。',
             'image.max' => '画像サイズは2MBまでです。',
-            'content.max' => '内容は255文字以内で入力してください。',
             'parent_id.exists' => '存在しない親ツイートです。',
         ];
     }

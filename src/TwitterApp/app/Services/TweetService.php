@@ -10,12 +10,31 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-
 class TweetService implements TweetServiceInterface
 {
+    // エラーログ共通化
+    protected function logError(string $message, array $context = []): void
+    {
+        $context['user_id'] = Auth::id();
+        Log::error($message, $context);
+    }
+
+    // 自分の投稿か確認
+    protected function authorizeUserTweet(Tweet $tweet): void
+    {
+        if ($tweet->user_id !== Auth::id()) {
+            throw new Exception('権限がありません');
+        }
+    }
+
     public function getTweets()
     {
-        return Tweet::with('user')->latest()->get();
+        try {
+            return Tweet::with('user')->latest()->get();
+        } catch (Exception $e) {
+            $this->logError('ツイート一覧取得失敗: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function createTweet(array $data)
@@ -28,19 +47,20 @@ class TweetService implements TweetServiceInterface
                     $imagePath = $data['image']->store('images', 'public');
                 }
 
-                // parent_idの存在確認（リプライ機能）
                 if (!empty($data['parent_id'])) {
                     Tweet::findOrFail($data['parent_id']);
                 }
 
-                return Tweet::create([
+                $tweet = Tweet::create([
                     'user_id' => Auth::id(),
                     'content' => $data['content'],
                     'image_path' => $imagePath,
                     'parent_id' => $data['parent_id'] ?? null,
                 ]);
+
+                return $tweet->load('user');
             } catch (Exception $e) {
-                Log::error('ツイート投稿失敗: ' . $e->getMessage());
+                $this->logError('ツイート投稿失敗: ' . $e->getMessage());
                 throw $e;
             }
         });
@@ -48,41 +68,51 @@ class TweetService implements TweetServiceInterface
 
     public function getTweetById(int $id)
     {
-        return Tweet::with('user')->findOrFail($id);
+        try {
+            return Tweet::with('user')->findOrFail($id);
+        } catch (Exception $e) {
+            $this->logError("ツイート取得失敗（ID: {$id}）: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function updateTweet(int $id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
-            $tweet = Tweet::findOrFail($id);
+            $tweet = Tweet::find($id);
 
-            // 自分のツイート以外は更新できない（保険）
-            if ($tweet->user_id !== Auth::id()) {
-                throw new Exception('このツイートを編集する権限がありません');
+            if (!$tweet) {
+                throw new Exception('ツイートが見つかりません');
             }
 
+            $this->authorizeUserTweet($tweet);
+
             try {
+                $imagePath = $tweet->image_path;
+
                 if (!empty($data['image']) && $data['image'] instanceof \Illuminate\Http\UploadedFile) {
-                    if ($tweet->image_path) {
-                        Storage::disk('public')->delete($tweet->image_path);
+                    if ($imagePath) {
+                        Storage::disk('public')->delete($imagePath);
                     }
-                    $data['image_path'] = $data['image']->store('images', 'public');
+                    $imagePath = $data['image']->store('images', 'public');
                 }
 
-                // parent_idが渡されたら存在チェック（リプライ編集時）
                 if (!empty($data['parent_id'])) {
                     Tweet::findOrFail($data['parent_id']);
                 }
 
                 $tweet->update([
                     'content' => $data['content'],
-                    'image_path' => $data['image_path'] ?? $tweet->image_path,
+                    'image_path' => $imagePath,
                     'parent_id' => $data['parent_id'] ?? $tweet->parent_id,
                 ]);
 
-                return $tweet;
+                return $tweet->load('user');
             } catch (Exception $e) {
-                Log::error('ツイート更新失敗: ' . $e->getMessage());
+                $this->logError("ツイート更新失敗（ID: {$id}）", [
+                    'error' => $e->getMessage(),
+                    'input' => $data,
+                ]);
                 throw $e;
             }
         });
@@ -91,11 +121,13 @@ class TweetService implements TweetServiceInterface
     public function deleteTweet(int $id)
     {
         return DB::transaction(function () use ($id) {
-            $tweet = Tweet::findOrFail($id);
+            $tweet = Tweet::find($id);
 
-            if ($tweet->user_id !== Auth::id()) {
-                throw new Exception('このツイートを削除する権限がありません');
+            if (!$tweet) {
+                throw new Exception('ツイートが見つかりません');
             }
+
+            $this->authorizeUserTweet($tweet);
 
             try {
                 if ($tweet->image_path) {
@@ -104,11 +136,11 @@ class TweetService implements TweetServiceInterface
 
                 return $tweet->delete();
             } catch (Exception $e) {
-                Log::error('ツイート削除失敗: ' . $e->getMessage());
+                $this->logError("ツイート削除失敗（ID: {$id}）", [
+                    'error' => $e->getMessage(),
+                ]);
                 throw $e;
             }
         });
-
     }
-
 }
