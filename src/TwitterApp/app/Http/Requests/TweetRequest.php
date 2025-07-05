@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+
 class TweetRequest extends FormRequest
 {
     // 特定の条件でバリデーション自体を止めたい場合（例：管理者だけ許可など）
@@ -21,7 +22,7 @@ class TweetRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'ValidationList::japaneseChars()',
+                // 'japanese',
             ],
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|integer|exists:tweets,id',

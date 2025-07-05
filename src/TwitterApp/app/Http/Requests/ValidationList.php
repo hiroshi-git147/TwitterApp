@@ -16,7 +16,7 @@ class ValidationList
         // \p{Katakana}: カタカナ
         // 、。・「」『』！？ー: 日本語の句読点と記号
         // \s: 空白文字
-        return 'regex:\p{Han}\p{Hiragana}\p{Katakana}、。・「」『』！？ー\s';
+        return '\p{Han}\p{Hiragana}\p{Katakana}、。・「」『』！？ー\s';
     }
 
     /**
@@ -26,7 +26,7 @@ class ValidationList
      */
     public static function englishChars(): string
     {
-        return 'regex:a-zA-Z';
+        return 'a-zA-Z';
     }
 
     /**
@@ -36,6 +36,6 @@ class ValidationList
      */
     public static function numericChars(): string
     {
-        return 'regex:0-9';
+        return '0-9';
     }
 }
