@@ -16,6 +16,10 @@ class Tweet extends Model
         'parent_id',
     ];
 
+    public function translations() {
+        return $this->hasMany(TweetTranslation::class);
+    }
+
     // ユーザーとの関係（1つのツイートは1人のユーザーが持つ）
     public function user()
     {

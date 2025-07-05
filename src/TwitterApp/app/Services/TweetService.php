@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Jobs\TranslateTweet;
 
 class TweetService implements TweetServiceInterface
 {
@@ -57,6 +58,8 @@ class TweetService implements TweetServiceInterface
                     'image_path' => $imagePath,
                     'parent_id' => $data['parent_id'] ?? null,
                 ]);
+                
+                $this->dispatchTranslationJobs($tweet);
 
                 return $tweet->load('user');
             } catch (Exception $e) {
@@ -142,5 +145,14 @@ class TweetService implements TweetServiceInterface
                 throw $e;
             }
         });
+    }
+
+    protected function dispatchTranslationJobs(Tweet $tweet): void
+    {
+        $langs = ['en', 'zh', 'es', 'de'];
+
+        foreach ($langs as $lang) {
+            TranslateTweet::dispatch($tweet, $lang);
+        }
     }
 }
