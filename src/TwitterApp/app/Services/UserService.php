@@ -15,10 +15,9 @@ class UserService implements UserServiceInterface
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'verification_code' => $data['verification_code'],
+            'verification_code_expires_at' => $data['verification_code_expires_at'],
         ]);
-
-        // メール認証通知
-        event(new Registered($user));
 
         return $user;
     }

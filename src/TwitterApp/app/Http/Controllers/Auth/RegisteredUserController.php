@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Http\Requests\RegisterRequest;
 use App\Services\Interfaces\UserServiceInterface;
+use App\Providers\RouteServiceProvider;
+use App\Mail\VerificationCodeMail;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -33,15 +35,23 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $user = $this->userService->register($request->validated());
+        $validatedData = $request->validated();
 
-        event(new Registered($user));
+        // 6桁の認証コードを生成
+        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $userData = array_merge($validatedData, [
+            'verification_code' => $verificationCode,
+            'verification_code_expires_at' => Carbon::now()->addMinutes(10), // 有効期限を10分に設定
+        ]);
+
+        $user = $this->userService->register($userData);
+
+        // 認証コードをメールで送信
+        Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
-
-        // API用レスポンス
-        // return response()->json(['message' => '登録成功　メールを確認しくてください。', 'user' => $user]);
+        return redirect()->route('verification.notice');
     }
 }
