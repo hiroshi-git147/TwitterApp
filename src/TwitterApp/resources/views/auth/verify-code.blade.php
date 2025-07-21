@@ -20,49 +20,43 @@
                     ご登録ありがとうございます！ご登録いただいたメールアドレスに6桁の認証コードを送信しました。メールをご確認の上、以下のフォームに認証コードを入力してください。
                 </div>
 
-                <!-- 再送完了メッセージ -->
-                @if (session('status') == 'verification-link-sent')
-                    <div class="mb-4 font-medium text-sm text-green-600">
-                        新しい認証コードを送信しました。
+                <!-- メッセージ表示エリア -->
+                <div id="message-area" class="mb-4 font-medium text-sm"></div>
+
+                <!-- 隠しフィールドでメールアドレスを保持 -->
+                <input type="hidden" id="email" value="{{ $email ?? '' }}">
+
+                <!-- 認証フォーム -->
+                <form id="verify-form">
+                    @csrf
+                    <div>
+                        <label for="code">認証コード</label>
+                        <input id="code" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" type="text" name="code" required autofocus />
                     </div>
-                @endif
-
-                <!-- エラー表示 -->
-                @if ($errors->any())
-                    <div class="mb-4">
-                        <div class="font-medium text-red-600">エラーが発生しました</div>
-                        <ul class="mt-3 list-disc list-inside text-sm text-red-600">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <div class="mt-4 flex items-center justify-between">
-                    <form method="POST" action="{{ route('verification.verify') }}">
-                        @csrf
-                        <div>
-                            <label for="code">認証コード</label>
-                            <input id="code" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" type="text" name="code" required autofocus />
-                        </div>
-                        <div class="flex items-center justify-end mt-4">
-                            <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-md">
-                                認証する
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="mt-4 flex items-center justify-between">
-                    <form method="POST" action="{{ route('verification.send') }}">
-                        @csrf
-                        <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900">
-                            認証コードを再送信する
+                    <div class="flex items-center justify-end mt-4">
+                        <!-- 認証ボタン -->
+                        <button type="submit" class="ml-4 px-4 py-2 bg-gray-800 text-white rounded-md">
+                            認証する
                         </button>
+                    </div>
+                </form>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <!-- 再送ボタン -->
+                    <button id="resend-button" class="underline text-sm text-gray-600 hover:text-gray-900">
+                        認証コードを再送信する
+                    </button>
+
+                    <!-- ログアウトフォーム -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900">ログアウトしてサインイン画面へ</button>
                     </form>
                 </div>
             </div>
         </div>
+
+        <!-- 分離したJavaScriptファイルを読み込む -->
+        <script src="{{ asset('js/verify-code.js') }}"></script>
     </body>
 </html>

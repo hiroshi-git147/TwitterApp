@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\VerificationCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// 認証コード検証API（認証不要）
+Route::post('/verify-code', [VerificationCodeController::class, 'verify']);
+
+// 認証コード再送信API (認証不要、ただし回数制限あり)
+Route::post('/resend-verification-code', [VerificationCodeController::class, 'resend'])
+    ->middleware('throttle:6,1');

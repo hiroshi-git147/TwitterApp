@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Http\Requests\RegisterRequest;
 use App\Services\Interfaces\UserServiceInterface;
-use App\Providers\RouteServiceProvider;
 use App\Mail\VerificationCodeMail;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class RegisteredUserController extends Controller
 {
