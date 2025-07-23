@@ -74,7 +74,7 @@ class TweetController extends Controller {
     public function store(TweetRequest $request): JsonResponse
     {
         try {
-            $this->authorize('view', $request);
+            $this->authorize('create', Tweet::class);
             $tweet = $this->tweetService->createTweet($request->validated());
             return response()->json([
                 'message' => 'ツイート成功',
