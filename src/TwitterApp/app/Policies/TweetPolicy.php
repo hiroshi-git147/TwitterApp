@@ -17,9 +17,21 @@ class TweetPolicy
      * @param  \App\Models\Tweet  $tweet
      * @return bool
      */
-    public function edit(User $user, Tweet $tweet)
+    public function view(User $user, Tweet $tweet)
     {
         return $user->id === $tweet->user_id;
+    }
+
+    /**
+     * Determine if the given Tweet can be updated by the user.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Tweet  $tweet
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user !== null;
     }
 
     /**

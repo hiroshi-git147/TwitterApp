@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\VerificationCodeController;
+use App\Http\Controllers\Api\TweetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,16 @@ Route::post('/verify-code', [VerificationCodeController::class, 'verify']);
 // 認証コード再送信API (認証不要、ただし回数制限あり)
 Route::post('/resend-verification-code', [VerificationCodeController::class, 'resend'])
     ->middleware('throttle:6,1');
+
+// 認証不要なルート
+Route::prefix('tweets')->name('api.tweets.')->group(function () {
+    Route::get('/', [TweetController::class, 'index'])->name('index');
+});
+
+// 認証が必要なルート
+Route::middleware('auth:sanctum')->prefix('tweets')->name('api.tweets.')->group(function () {
+    // Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
+    // Route::post('/', [TweetController::class, 'store'])->name('store');
+    // Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update');
+    // Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
+});

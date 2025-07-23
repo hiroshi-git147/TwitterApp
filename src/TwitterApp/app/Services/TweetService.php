@@ -130,7 +130,7 @@ class TweetService implements TweetServiceInterface
                 throw new Exception('ツイートが見つかりません');
             }
 
-            $this->authorizeUserTweet($tweet);
+            // $this->authorizeUserTweet($tweet);
 
             try {
                 if ($tweet->image_path) {

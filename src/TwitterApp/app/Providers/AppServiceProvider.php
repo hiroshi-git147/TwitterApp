@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserServiceInterface::class, UserService::class);
         $this->app->bind(ProfileServiceInterface::class, ProfileService::class);
         $this->app->bind(TweetServiceInterface::class, TweetService::class);
+
     }
 
     /**
