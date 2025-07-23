@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Api\VerifyCodeRequest;
+use App\Http\Requests\Api\ResendVerificationCodeRequest;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
 use Carbon\Carbon;
@@ -15,23 +16,15 @@ class VerificationCodeController extends Controller
     /**
      * メールアドレスを認証済みとしてマークします。
      */
-    public function verify(Request $request): JsonResponse
+    public function verify(VerifyCodeRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'code' => ['required', 'string', 'digits:6'],
-        ], [
-            'email.required' => 'メールアドレスが存在しません。',
-            'email.email'    => '有効なメールアドレス形式ではありません。',
-            'code.required' => '認証コードを入力してください。',
-            'code.digits'   => '認証コードは6桁の数字で入力してください。',
-        ]);
+        $validated = $request->validated();
 
-        $user = User::where('email', $request->email)->first();
+        // FormRequestの'exists'ルールにより、ユーザーの存在は保証されています。
+        $user = User::where('email', $validated['email'])->firstOrFail();
 
         // ユーザーが存在しない、またはコードが一致しない場合
-        // ユーザーが存在しないことを悟られないように、同じエラーメッセージを返す
-        if (!$user || $user->verification_code !== $request->code) {
+        if ($user->verification_code !== $validated['code']) {
             return response()->json(['message' => '認証コードが正しくありません。'], 422);
         }
 
@@ -54,23 +47,15 @@ class VerificationCodeController extends Controller
     /**
      * 認証コードを再送信します。
      */
-    public function resend(Request $request): JsonResponse
+    public function resend(ResendVerificationCodeRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'string', 'email'],
-            
-        ], [
-            'email.required' => 'メールアドレスが存在しません。',
-            'email.email'    => '有効なメールアドレス形式ではありません。',
-        ]);
+        $validated = $request->validated();
 
-        $user = User::where('email', $request->email)->first();
-
-        // ユーザーが存在しない場合でも、成功したかのようなレスポンスを返し、
-        // メールアドレスの存在を推測させないようにする
-        if (!$user) {
-            return response()->json(['message' => '認証コードを送信しました。']);
-        }
+        // FormRequestの'exists:users,email'ルールにより、
+        // この時点で$userは必ず存在することが保証されています。
+        // 存在しない場合は、FormRequestが自動的に422エラーを返します。
+        // firstOrFail()は、念のため見つからない場合に例外をスローします。
+        $user = User::where('email', $validated['email'])->firstOrFail();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json(['message' => 'すでに認証済みです。'], 400);

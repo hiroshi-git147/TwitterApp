@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // メッセージを表示するヘルパー関数
     const showMessage = (message, isError = false) => {
-        console.log(message);
         messageArea.textContent = message;
         messageArea.className = `mb-4 font-medium text-sm ${
             isError ? "text-red-600" : "text-green-600"
