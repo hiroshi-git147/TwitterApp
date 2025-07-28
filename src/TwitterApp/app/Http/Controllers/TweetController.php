@@ -15,7 +15,7 @@ class TweetController extends Controller {
     public function show(Tweet $tweet): View
     {
         $this->authorize('view', $tweet);
-        return view('tweets.edit', compact('tweet'));
+        return view('tweets.show', compact('tweet'));
     }
 
     public function create(): View

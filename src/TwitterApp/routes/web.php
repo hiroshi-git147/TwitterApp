@@ -42,23 +42,28 @@ Route::middleware('auth')->prefix('tweets')->name('tweets.')->group(function () 
     Route::get('/{tweet}/edit', [TweetController::class, 'edit'])->name('edit'); 
 });
 
-// JavaScriptからの非同期通信用のルートをここに定義します
+Route::prefix('tweets')->name('tweets.')->group(function () {
+    // ビューを返すルート
+    Route::get('/', [TweetController::class, 'index'])->name('index');
+});
+
 Route::middleware('auth')
     ->prefix('/api/tweets')
     ->controller(App\Http\Controllers\Api\TweetController::class)
     ->name('tweets.')
     ->group(function() {
+        Route::get('/', 'index')->name('index.api');
+        Route::get('/{tweet}', 'show')->name('show.api');
         Route::post('/', 'store')->name('store.api');
-        Route::patch('/{tweet}', 'update')->name('update.api');
-        Route::delete('/{tweet}', 'destroy')->name('destroy.api');
+        Route::get('/edit/{tweet}', 'store')->name('store.api');
+        Route::patch('/update/{tweet}', 'update')->name('update.api');
+        Route::delete('/delete/{tweet}', 'destroy')->name('destroy.api');
 });
 
-// 認証不要なルート
-Route::prefix('tweets')->name('tweets.')->group(function () {
-    Route::get('/', [TweetController::class, 'index'])->name('index');
+Route::controller(App\Http\Controllers\Api\TweetController::class)
+    ->name('tweets.')
+    ->group(function() {
+        Route::get('/api/tweets/', 'index')->name('index.api');
 });
-
-
-
 
 require __DIR__.'/auth.php';

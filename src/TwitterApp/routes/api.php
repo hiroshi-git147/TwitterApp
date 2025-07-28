@@ -27,13 +27,7 @@ Route::post('/verify-code', [VerificationCodeController::class, 'verify']);
 Route::post('/resend-verification-code', [VerificationCodeController::class, 'resend'])
     ->middleware('throttle:6,1');
 
-// 認証不要なルート
-Route::prefix('tweets')->name('api.tweets.')->group(function () {
-    Route::get('/', [TweetController::class, 'index'])->name('index');
-});
-
 // 認証が必要なルート
 Route::middleware('auth:sanctum')->prefix('tweets')->name('api.tweets.')->group(function () {
     Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
-    
 });

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             tweetList.innerHTML = "<p>ツイートがありません</p>";
             return;
         }
-        console.log(tweets);
+
         tweetList.innerHTML = tweets
             .map(
                 (tweet) => `
