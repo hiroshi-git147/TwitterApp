@@ -21,7 +21,16 @@
                 <button id="updateTweetButton" type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">更新する</button>
             </form>
 
+
+            @can('destroy', $tweet)
+                <form id="deleteTweetForm" method="POST" class="mt-4" onsubmit="return confirm('本当に削除しますか？');">
+                    @csrf
+                    @method('DELETE')
+                    <button id="deleteTweetButton" type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">削除する</button>
+                </form>
+            @endcan
         </div>
     </div>
 </x-app-layout>
 <script src="{{ asset('js/TweetJs/update.js') }}"></script>
+<script src="{{ asset('js/TweetJs/delete.js') }}"></script>

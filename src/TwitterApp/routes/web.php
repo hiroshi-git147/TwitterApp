@@ -50,6 +50,7 @@ Route::middleware('auth')
     ->group(function() {
         Route::post('/', 'store')->name('store.api');
         Route::patch('/{tweet}', 'update')->name('update.api');
+        Route::delete('/{tweet}', 'destroy')->name('destroy.api');
 });
 
 // 認証不要なルート

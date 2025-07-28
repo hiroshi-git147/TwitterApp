@@ -35,5 +35,5 @@ Route::prefix('tweets')->name('api.tweets.')->group(function () {
 // 認証が必要なルート
 Route::middleware('auth:sanctum')->prefix('tweets')->name('api.tweets.')->group(function () {
     Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
-    Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
+    
 });
