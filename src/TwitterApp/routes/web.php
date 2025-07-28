@@ -43,7 +43,14 @@ Route::middleware('auth')->prefix('tweets')->name('tweets.')->group(function () 
 });
 
 // JavaScriptからの非同期通信用のルートをここに定義します
-Route::post('/api/tweets', [\App\Http\Controllers\Api\TweetController::class, 'store'])->middleware('auth')->name('tweets.store.api');
+Route::middleware('auth')
+    ->prefix('/api/tweets')
+    ->controller(App\Http\Controllers\Api\TweetController::class)
+    ->name('tweets.')
+    ->group(function() {
+        Route::post('/', 'store')->name('store.api');
+        Route::patch('/{tweet}', 'update')->name('update.api');
+});
 
 // 認証不要なルート
 Route::prefix('tweets')->name('tweets.')->group(function () {

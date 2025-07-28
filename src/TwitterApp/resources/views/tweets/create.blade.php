@@ -10,7 +10,7 @@
             <!-- メッセージ表示エリア -->
             <div id="message-area" class="mb-4 font-medium text-sm"></div>
 
-            <form id="tweetForm" enctype="multipart/form-data">
+            <form id="tweetForm" enctype="multipart/form-data" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label for="content" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">本文</label>
