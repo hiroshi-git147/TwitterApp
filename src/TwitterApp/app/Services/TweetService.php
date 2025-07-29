@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Exception;
 use App\Jobs\TranslateTweet;
+use \Illuminate\Support\Collection;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TweetService implements TweetServiceInterface
 {
@@ -24,16 +26,16 @@ class TweetService implements TweetServiceInterface
     protected function authorizeUserTweet(Tweet $tweet): void
     {
         if ($tweet->user_id !== Auth::id()) {
-            throw new Exception('権限がありません');
+            throw new AuthorizationException('権限がありません');
         }
     }
 
-    public function getTweets()
+    public function getTweets(): Collection
     {
         try {
             return Tweet::with('user')->latest()->get();
-        } catch (Exception $e) {
-            $this->logError('ツイート一覧取得失敗: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->logError('ツイート一覧取得失敗: ', ['error' => $e]);
             throw $e;
         }
     }
@@ -62,19 +64,19 @@ class TweetService implements TweetServiceInterface
                 $this->dispatchTranslationJobs($tweet);
 
                 return $tweet->load('user');
-            } catch (Exception $e) {
-                $this->logError('ツイート投稿失敗: ' . $e->getMessage());
+            } catch (\Throwable $e) {
+                $this->logError('ツイート投稿失敗: ', ['error' => $e]);
                 throw $e;
             }
         });
     }
 
-    public function getTweetById(int $id)
+    public function getTweetById(int $id): Tweet
     {
         try {
             return Tweet::with('user')->findOrFail($id);
-        } catch (Exception $e) {
-            $this->logError("ツイート取得失敗（ID: {$id}）: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->logError("ツイート取得失敗（ID: {$id}）: ", ['error' => $e]);
             throw $e;
         }
     }
@@ -85,7 +87,7 @@ class TweetService implements TweetServiceInterface
             $tweet = Tweet::find($id);
 
             if (!$tweet) {
-                throw new Exception('ツイートが見つかりません');
+                throw new ModelNotFoundException('ツイートが見つかりません');
             }
 
             $this->authorizeUserTweet($tweet);
@@ -111,9 +113,9 @@ class TweetService implements TweetServiceInterface
                 ]);
 
                 return $tweet->load('user');
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logError("ツイート更新失敗（ID: {$id}）", [
-                    'error' => $e->getMessage(),
+                    'error' => $e,
                     'input' => $data,
                 ]);
                 throw $e;
@@ -127,10 +129,10 @@ class TweetService implements TweetServiceInterface
             $tweet = Tweet::find($id);
 
             if (!$tweet) {
-                throw new Exception('ツイートが見つかりません');
+                throw new ModelNotFoundException('ツイートが見つかりません');
             }
 
-            // $this->authorizeUserTweet($tweet);
+            $this->authorizeUserTweet($tweet);
 
             try {
                 if ($tweet->image_path) {
@@ -138,7 +140,7 @@ class TweetService implements TweetServiceInterface
                 }
 
                 return $tweet->delete();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logError("ツイート削除失敗（ID: {$id}）", [
                     'error' => $e->getMessage(),
                 ]);
