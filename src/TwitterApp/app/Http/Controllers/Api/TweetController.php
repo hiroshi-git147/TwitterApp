@@ -16,10 +16,21 @@ class TweetController extends Controller {
 
     private $tweetService;
 
+    /**
+     * コンストラクタ
+     * 
+     * @param TweetServiceInterface $tweetService ツイートサービスのインターフェース
+     * @return void
+     */
     public function __construct(TweetServiceInterface $tweetService) {
         $this->tweetService = $tweetService;
     }
 
+    /**
+     * 投稿一覧をJSONで返す
+     * 
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         try {
@@ -38,6 +49,9 @@ class TweetController extends Controller {
 
     /**
      * 投稿詳細をJSONで返す
+     * 
+     * @param Tweet $tweet 投稿
+     * @return JsonResponse
      */
     public function show(Tweet $tweet): JsonResponse
     {
@@ -70,6 +84,9 @@ class TweetController extends Controller {
 
     /**
      * 新しい投稿を作成する
+     * 
+     * @param TweetRequest $request 投稿リクエスト
+     * @return JsonResponse
     */
     public function store(TweetRequest $request): JsonResponse
     {
@@ -98,6 +115,10 @@ class TweetController extends Controller {
 
     /**
      * 投稿を更新する
+     * 
+     * @param TweetRequest $request 投稿リクエスト
+     * @param Tweet $tweet 投稿
+     * @return JsonResponse
      */
     public function update(TweetRequest $request, Tweet $tweet): JsonResponse
     {
@@ -126,6 +147,12 @@ class TweetController extends Controller {
         
     }
 
+    /**
+     * 投稿を削除する
+     * 
+     * @param Tweet $tweet 投稿
+     * @return JsonResponse
+     */
     public function destroy(Tweet $tweet): JsonResponse
     {
         try {
