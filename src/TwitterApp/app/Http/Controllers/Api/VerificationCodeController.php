@@ -15,6 +15,9 @@ class VerificationCodeController extends Controller
 {
     /**
      * メールアドレスを認証済みとしてマークします。
+     * 
+     * @param VerifyCodeRequest $request 認証コードリクエスト
+     * @return JsonResponse
      */
     public function verify(VerifyCodeRequest $request): JsonResponse
     {
@@ -46,6 +49,9 @@ class VerificationCodeController extends Controller
 
     /**
      * 認証コードを再送信します。
+     * 
+     * @param ResendVerificationCodeRequest $request 再送信リクエスト
+     * @return JsonResponse
      */
     public function resend(ResendVerificationCodeRequest $request): JsonResponse
     {
