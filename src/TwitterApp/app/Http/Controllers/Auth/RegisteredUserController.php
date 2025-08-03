@@ -15,11 +15,18 @@ use Illuminate\Http\Request;
 
 class RegisteredUserController extends Controller
 {
+    // ユーザーサービスのインターフェース
     private $userService;
 
+    /**
+     * コンストラクタ
+     * 
+     * @param UserServiceInterface $userService ユーザーサービスのインターフェース
+     */
     public function __construct(UserServiceInterface $userService) {
         $this->userService = $userService;
     }
+    
     /**
      * Display the registration view.
      */
@@ -30,8 +37,10 @@ class RegisteredUserController extends Controller
 
     /**
      * Handle an incoming registration request.
-     *
+     * 
      * @throws \Illuminate\Validation\ValidationException
+     * @param RegisterRequest $request リクエスト
+     * @return RedirectResponse
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
