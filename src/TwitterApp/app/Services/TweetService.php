@@ -15,14 +15,26 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TweetService implements TweetServiceInterface
 {
-    // エラーログ共通化
+    /**
+     * エラーログ共通化
+     * 
+     * @param string $message
+     * @param array $context
+     * 
+     * @return void
+     */
     protected function logError(string $message, array $context = []): void
     {
         $context['user_id'] = Auth::id();
         Log::error($message, $context);
     }
 
-    // 自分の投稿か確認
+    /**
+     * 自分の投稿か確認する
+     * 
+     * @param Tweet $tweet
+     * @return void
+     */
     protected function authorizeUserTweet(Tweet $tweet): void
     {
         if ($tweet->user_id !== Auth::id()) {
@@ -30,6 +42,11 @@ class TweetService implements TweetServiceInterface
         }
     }
 
+    /**
+     * ツイート一覧を取得する
+     * 
+     * @return Collection
+     */
     public function getTweets(): Collection
     {
         try {
@@ -40,7 +57,13 @@ class TweetService implements TweetServiceInterface
         }
     }
 
-    public function createTweet(array $data)
+    /**
+     * ツイート投稿する
+     * 
+     * @param array $data
+     * @return Tweet
+     */
+    public function createTweet(array $data): Tweet
     {
         return DB::transaction(function () use ($data) {
             try {
@@ -71,6 +94,12 @@ class TweetService implements TweetServiceInterface
         });
     }
 
+    /**
+     * ツイートを取得する
+     * 
+     * @param int $id
+     * @return Tweet
+     */
     public function getTweetById(int $id): Tweet
     {
         try {
@@ -81,7 +110,14 @@ class TweetService implements TweetServiceInterface
         }
     }
 
-    public function updateTweet(int $id, array $data)
+    /**
+     * ツイートを更新する
+     * 
+     * @param int $id
+     * @param array $data
+     * @return Tweet
+     */
+    public function updateTweet(int $id, array $data): Tweet
     {
         return DB::transaction(function () use ($id, $data) {
             $tweet = Tweet::find($id);
@@ -123,7 +159,13 @@ class TweetService implements TweetServiceInterface
         });
     }
 
-    public function deleteTweet(int $id)
+    /**
+     * ツイートを削除する
+     * 
+     * @param int $id
+     * @return mixed
+     */
+    public function deleteTweet(int $id): mixed
     {
         return DB::transaction(function () use ($id) {
             $tweet = Tweet::find($id);
