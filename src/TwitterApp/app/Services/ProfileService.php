@@ -7,6 +7,13 @@ use App\Models\User;
 
 class ProfileService implements ProfileServiceInterface
 {
+    /**
+     * ユーザー情報を更新する
+     * 
+     * @param User $user
+     * @param array $data
+     * @return User
+     */
     public function updateUserProfile(User $user, array $data): User
     {
         $user->fill($data);
@@ -20,6 +27,12 @@ class ProfileService implements ProfileServiceInterface
         return $user;
     }
 
+    /**
+     * ユーザーを削除する
+     * 
+     * @param User $user
+     * @return void
+     */
     public function deleteUser(User $user): void
     {
         $user->delete();
