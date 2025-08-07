@@ -7,7 +7,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class TweetRequest extends FormRequest
 {
-    // 特定の条件でバリデーション自体を止めたい場合（例：管理者だけ許可など）
+    /**
+     * 特定の条件でバリデーション自体を止めたい場合（例：管理者だけ許可など）
+     * 
+     * @return bool
+     */
     public function authorize(): bool
     {
         // 投稿はログイン済み前提なのでtrueでOK（ポリシーで制限するならfalseでも可）
@@ -15,6 +19,11 @@ class TweetRequest extends FormRequest
     }
 
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
