@@ -9,7 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService implements UserServiceInterface
 {
-    public function register(array $data)
+    /**
+     * ユーザーを登録する
+     * 
+     * @param array $data
+     * @return User
+     */
+    public function register(array $data): User
     {
         $user = User::create([
             'name' => $data['name'],
@@ -22,6 +28,7 @@ class UserService implements UserServiceInterface
         return $user;
     }
 
+    // TODO：不要な処理
     public function verifyEmail($userId, $hash)
     {
         $user = User::findOrFail($userId);
