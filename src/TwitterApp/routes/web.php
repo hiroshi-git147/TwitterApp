@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TweetController;
+use App\Http\Controllers\Api\TweetController as ApiTweetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,7 +50,7 @@ Route::prefix('tweets')->name('tweets.')->group(function () {
 
 Route::middleware('auth')
     ->prefix('/api/tweets')
-    ->controller(App\Http\Controllers\Api\TweetController::class)
+    ->controller(ApiTweetController::class)
     ->name('tweets.')
     ->group(function() {
         Route::get('/', 'index')->name('index.api');
@@ -60,7 +61,7 @@ Route::middleware('auth')
         Route::delete('/delete/{tweet}', 'destroy')->name('destroy.api');
 });
 
-Route::controller(App\Http\Controllers\Api\TweetController::class)
+Route::controller(ApiTweetController::class)
     ->name('tweets.')
     ->group(function() {
         Route::get('/api/tweets/', 'index')->name('index.api');
