@@ -9,16 +9,14 @@ class Tweet extends Model
 {
     use HasFactory;
 
+    protected $table = 'tr_tweets';
+
     protected $fillable = [
         'user_id',
         'content',
         'image_path',
         'parent_id',
     ];
-
-    public function translations() {
-        return $this->hasMany(TweetTranslation::class);
-    }
 
     // ユーザーとの関係（1つのツイートは1人のユーザーが持つ）
     public function user()
