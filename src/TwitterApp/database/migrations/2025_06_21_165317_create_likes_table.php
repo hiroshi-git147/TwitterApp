@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('likes', function (Blueprint $table) {
+        Schema::create('rt_likes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tweet_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('mt_users')->onDelete('cascade');
+            $table->foreignId('tweet_id')->constrained('tr_tweets')->onDelete('cascade');
             $table->timestamps();
         
             // 同じ組み合わせは禁止
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('likes');
+        Schema::dropIfExists('rt_likes');
     }
 };

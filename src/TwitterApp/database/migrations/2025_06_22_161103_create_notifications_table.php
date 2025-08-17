@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('tr_notifications', function (Blueprint $table) {
             $table->id();
             // 通知を受け取るユーザー
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('mt_users')->onDelete('cascade');
 
             // 通知の種類
             $table->string('type');
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('tr_notifications');
     }
 };

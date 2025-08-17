@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('mt_settings', function (Blueprint $table) {
             $table->id();
             // 通知設定（true: 受け取る, false: 受け取らない）
             $table->boolean('notify_like')->default(true);
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('mt_settings');
     }
 };

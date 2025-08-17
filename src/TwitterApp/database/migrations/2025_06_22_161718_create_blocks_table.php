@@ -13,16 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('blocks', function (Blueprint $table) {
+        Schema::create('rt_blocks', function (Blueprint $table) {
             $table->id();
             // ブロックした人
             $table->foreignId('blocker_id')
-            ->constrained('users')
+            ->constrained('mt_users')
             ->onDelete('cascade');
 
             // ブロックされた人
             $table->foreignId('blocked_id')
-                ->constrained('users')
+                ->constrained('mt_users')
                 ->onDelete('cascade');
 
             $table->timestamps();
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('blocks');
+        Schema::dropIfExists('rt_blocks');
     }
 };

@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('tr_messages', function (Blueprint $table) {
             $table->id();
             // 送信者ID
-            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('sender_id')->constrained('mt_users')->onDelete('cascade');
 
             // 受信者ID
-            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('mt_users')->onDelete('cascade');
 
             // メッセージ内容
             $table->text('content');
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('tr_messages');
     }
 };

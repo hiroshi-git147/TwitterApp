@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tweets', function (Blueprint $table) {
+        Schema::create('tr_tweets', function (Blueprint $table) {
             $table->id(); // id BIGINT AUTO_INCREMENT
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ユーザーID、外部キー制約
+            $table->foreignId('user_id')->constrained('mt_users')->onDelete('cascade'); // ユーザーID、外部キー制約
             $table->text('content'); // ツイート内容
             $table->string('image_path')->nullable(); // 画像パス
-            $table->foreignId('parent_id')->nullable()->constrained('tweets'); // リプライ元ID
+            $table->foreignId('parent_id')->nullable()->constrained('tr_tweets'); // リプライ元ID
             $table->timestamps(); // created_at, updated_at
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tweets');
+        Schema::dropIfExists('tr_tweets');
     }
 };

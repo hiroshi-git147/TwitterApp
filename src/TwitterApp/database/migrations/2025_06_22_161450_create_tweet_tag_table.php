@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tweet_tag', function (Blueprint $table) {
+        Schema::create('rt_tweet_tag', function (Blueprint $table) {
             $table->id();
             // ツイートID
-            $table->foreignId('tweet_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tweet_id')->constrained('tr_tweets')->onDelete('cascade');
 
             // タグID
-            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tag_id')->constrained('mt_tags')->onDelete('cascade');
             $table->timestamps();
 
             // 重複登録を防ぐ
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tweet_tag');
+        Schema::dropIfExists('rt_tweet_tag');
     }
 };
