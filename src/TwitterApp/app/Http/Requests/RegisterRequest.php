@@ -8,7 +8,12 @@ use Illuminate\Validation\Rules;
 
 class RegisterRequest extends FormRequest
 {
-    public function rules()
+    /**
+     * バリデーションルール
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
     {
         return [
             'name' => [
@@ -33,7 +38,10 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    public function attributes()
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
     {
         return [
             'name' => '名前',
@@ -42,6 +50,11 @@ class RegisterRequest extends FormRequest
         ];
     }
 
+    /**
+     * バリデーションメッセージ
+     *
+     * @return array<string, string>
+     */
     public function messages(): array {
         return [
             // name関連

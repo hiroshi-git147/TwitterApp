@@ -54,7 +54,10 @@ class TweetRequest extends FormRequest
         ];
     }
 
-    public function attributes()
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
     {
         return [
             'content' => '投稿内容',
