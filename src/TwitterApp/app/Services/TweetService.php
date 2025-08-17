@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\TranslateTweet;
 use \Illuminate\Support\Collection;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -83,8 +82,6 @@ class TweetService implements TweetServiceInterface
                     'image_path' => $imagePath,
                     'parent_id' => $data['parent_id'] ?? null,
                 ]);
-                
-                $this->dispatchTranslationJobs($tweet);
 
                 return $tweet->load('user');
             } catch (\Throwable $e) {
@@ -189,14 +186,5 @@ class TweetService implements TweetServiceInterface
                 throw $e;
             }
         });
-    }
-
-    protected function dispatchTranslationJobs(Tweet $tweet): void
-    {
-        $langs = ['en', 'zh', 'es', 'de'];
-
-        foreach ($langs as $lang) {
-            TranslateTweet::dispatch($tweet, $lang);
-        }
     }
 }
